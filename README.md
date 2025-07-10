@@ -96,3 +96,15 @@ INSERT INTO users (username, password, role) VALUES ('admin', 'encrypted_passwor
 
 ## 📸 Screenshots
 
+![image](https://github.com/user-attachments/assets/150c487d-23b8-4e21-93ec-55457fbc8722)
+![image](https://github.com/user-attachments/assets/c4a04bdb-b80a-404e-83b2-9111ff8a941f)
+![image](https://github.com/user-attachments/assets/1e056e0d-96ed-4818-9821-4eadf0a70b89)
+![image](https://github.com/user-attachments/assets/05cc8c92-7e77-48bf-9023-03150635ada2)
+![image](https://github.com/user-attachments/assets/78a2766e-5dd6-467b-8b86-40ff841fe5c2)
+![image](https://github.com/user-attachments/assets/4890e818-e0b0-4611-90a0-62ce0d03bb30)
+![image](https://github.com/user-attachments/assets/218e2ec3-4246-4a0a-b0a5-c51d628fea8c)
+
+
+
+
+

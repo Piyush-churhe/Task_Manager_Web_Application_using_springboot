@@ -69,6 +69,7 @@ http://localhost:8080
 
 ## 📁 Project Structure
 
+```
 task-manager/
 ├── src/
 │   └── main/
@@ -83,6 +84,7 @@ task-manager/
 │           └── application.properties
 ├── pom.xml
 └── README.md
+```
 
 ## 🔐 Admin Login Details
 

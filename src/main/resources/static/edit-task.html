@@ -1,0 +1,109 @@
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Task</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+    <h1>📋 Task Manager</h1>
+    <nav>
+        <a href="index.html">View Tasks</a> |
+        <a href="add-task.html">Add New Task</a>
+    </nav>
+</header>
+
+<h2>Edit Task</h2>
+<form id="editForm">
+    <input type="text" id="title" placeholder="Title" required><br>
+    <input type="text" id="description" placeholder="Description"><br>
+    <input type="time" id="time" placeholder="Time" required><br>
+    <input type="date" id="dueDate"><br>
+    <select id="priority">
+        <option>High</option>
+        <option>Medium</option>
+        <option>Low</option>
+    </select><br>
+    <select id="status">
+        <option>Pending</option>
+        <option>Ongoing</option>
+        <option>Completed</option>
+    </select><br>
+    <button type="submit">Update Task</button>
+</form>
+
+<script src="js/task-api.js"></script>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const taskId = urlParams.get("id");
+
+    async function loadTask() {
+      const res = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+        headers: { "Authorization": `Bearer ${token}` }
+      });
+
+      if (!res.ok) {
+        alert("Unable to load task.");
+        return;
+      }
+
+      const task = await res.json();
+
+      // Populate the form fields
+      document.getElementById("title").value = task.title || "";
+      document.getElementById("description").value = task.description || "";
+      document.getElementById("time").value = task.time || "";
+      document.getElementById("dueDate").value = task.dueDate || "";
+      document.getElementById("priority").value = task.priority || "Medium";
+      document.getElementById("status").value = task.status || "Pending";
+    }
+
+    // Submit update form
+    document.getElementById("editForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const updatedTask = {
+        title: document.getElementById("title").value,
+        description: document.getElementById("description").value,
+        dueDate: document.getElementById("dueDate").value,
+        time: document.getElementById("time").value,
+        priority: document.getElementById("priority").value,
+        status: document.getElementById("status").value
+      };
+
+      const res = await fetch(`http://localhost:8080/api/tasks/${taskId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify(updatedTask)
+      });
+
+    if (res.ok) {
+      localStorage.setItem("editSuccess", "true");
+      window.location.href = "index.html";
+    } else {
+      alert("Failed to update task.");
+    }
+});
+
+loadTask();
+     // Load task on page load
+</script>
+
+<div id="toast" class="toast"></div>
+
+<footer>
+    <p>&copy; 2025 Task Manager. Built with ❤️ using Spring Boot + HTML/JS.</p>
+</footer>
+</body>
+</html>

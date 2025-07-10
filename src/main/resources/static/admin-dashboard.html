@@ -1,0 +1,125 @@
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) window.location.href = "login.html";
+    </script>
+</head>
+<body>
+<header>
+    <h1>👑 Admin Panel</h1>
+    <nav>
+        <a href=""></a>
+        <a href=""></a>
+        <a href=""></a>
+        <a href=""></a>
+        <a href=""></a>
+        <a href="admin-dashboard.html">Dashboard</a> |
+        <a href="assign-task.html">Assign Task</a>
+        <button onclick="logout()" style="float: right; margin-left: 20px;">Sign Out</button>
+
+    </nav>
+</header>
+
+<section>
+    <h2>All Users</h2>
+    <table id="user-table">
+        <thead>
+        <tr><th>Username</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+<section>
+    <h2>All Tasks</h2>
+    <table id="task-table">
+        <thead>
+        <tr><th>Title</th><th>User</th><th>Status</th><th>Due Date</th><th>Time</th><th>Actions</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</section>
+
+
+<footer>
+    <p>&copy; 2025 Task Manager Admin Panel</p>
+</footer>
+
+<script>
+    async function fetchUsers() {
+    const res = await fetch("/api/admin/users", {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+    const users = await res.json();
+
+    const userTable = document.querySelector("#user-table tbody");
+    userTable.innerHTML = users.map(u => `
+        <tr>
+            <td>${u.username}</td>
+            <td><button onclick="deleteUser(${u.id})">Delete</button></td>
+        </tr>`).join("");
+
+    // Populate usernames dropdown
+    const dropdown = document.getElementById("username");
+    dropdown.innerHTML = users.map(u => `<option>${u.username}</option>`).join("");
+}
+
+
+    async function fetchTasks() {
+        const res = await fetch("/api/admin/tasks", {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        const tasks = await res.json();
+        const taskTable = document.querySelector("#task-table tbody");
+        taskTable.innerHTML = tasks.map(t => `
+            <tr>
+                <td>${t.title}</td>
+                <td>${t.user.username}</td>
+                <td>${t.status}</td>
+                <td>${t.dueDate}</td>
+                <td>${t.time}</td>
+                <td><button onclick="deleteTask(${t.id})">Delete</button></td>
+            </tr>`).join("");
+    }
+
+    async function deleteUser(id) {
+        await fetch(`/api/admin/users/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchUsers();
+    }
+
+    async function deleteTask(id) {
+        await fetch(`/api/admin/tasks/${id}`, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        fetchTasks();
+    }
+
+    function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+
+
+    window.onload = () => {
+        fetchUsers();
+        fetchTasks();
+    }
+</script>
+</body>
+</html>

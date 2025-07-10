@@ -1,0 +1,85 @@
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=">
+    <title>Task Manager</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<header>
+    <h1>📋 Task Manager</h1>
+    <nav style="text-align: center;">
+        <a href=""></a>
+        <a href=""></a>
+        <a href=""></a>
+        <a href=""></a>
+        <a href="index.html">View Tasks</a> |
+        <a href="add-task.html">Add New Task</a>
+        <button onclick="logout()" style="float: right; margin-left: 20px;">Sign Out</button>
+    </nav>
+</header>
+
+<div id="task-filter">
+    <button onclick="filterTasks('All')">All</button>
+    <button onclick="filterTasks('Ongoing')">Ongoing</button>
+    <button onclick="filterTasks('Pending')">Pending</button>
+    <button onclick="filterTasks('Completed')">Completed</button>
+</div>
+
+
+<div id="task-list"></div>
+<script src="js/task-api.js"></script>
+<script>
+    let allTasks = [];
+
+    function renderTasks(tasks) {
+      const container = document.getElementById("task-list");
+      container.innerHTML = tasks.map(t => `
+        <div class="task-card">
+          <h3>${t.title}</h3>
+          <p>${t.description}</p>
+          <p><strong>Status:</strong> <span class="task-status">${t.status}</span></p>
+          <p>Due: ${t.dueDate} at ${t.time}</p>
+          <p>Priority: ${t.priority}</p>
+          <button onclick="window.location.href='edit-task.html?id=${t.id}'">Edit</button>
+          <button onclick="deleteTask(${t.id}).then(() => location.reload())">Delete</button>
+        </div>
+      `).join("");
+    }
+
+    window.onload = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      allTasks = await fetchTasks();
+      renderTasks(allTasks);
+    };
+
+
+  function logout() {
+    localStorage.removeItem("token");
+    window.location.href = "login.html";
+  }
+
+</script>
+
+
+<div id="toast" class="toast"></div>
+
+<footer>
+    <p>&copy; 2025 Task Manager. Built with ❤️ using Spring Boot + HTML/JS.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,50 @@
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+    }
+</script>
+
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="css/style.css">
+    <meta charset="UTF-8">
+    <header>
+        <h1>📋 Task Manager</h1>
+        <nav>
+            <a href="index.html">View Tasks</a> |
+            <a href="add-task.html">Add New Task</a>
+        </nav>
+    </header>
+</head>
+<body>
+<h2>Create New Task</h2>
+<form id="taskForm">
+    <input type="text" id="title" placeholder="Title" required />
+    <input type="text" id="description" placeholder="Description" required />
+    <input type="time" id="time" placeholder="Time" required />
+    <input type="date" id="dueDate" required />
+    <select id="priority">
+        <option>Low</option><option>Medium</option><option>High</option>
+    </select>
+    <button type="submit">Save Task</button>
+</form>
+
+<script src="js/task-api.js"></script>
+<script>
+    document.getElementById("taskForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      await createTask(); // defined in task-api.js
+      window.location.href = "tasks.html";
+    });
+</script>
+
+<div id="toast" class="toast"></div>
+
+<footer>
+    <p>&copy; 2025 Task Manager. Built with ❤️ using Spring Boot + HTML/JS.</p>
+</footer>
+
+
+</body>
+</html>

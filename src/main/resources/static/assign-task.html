@@ -1,0 +1,128 @@
+<script>
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.location.href = "login.html";
+    }
+</script>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Assign Task - Admin Panel</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script>
+        const token = localStorage.getItem("token");
+        if (!token) window.location.href = "login.html";
+    </script>
+    <style>
+        form input, form select {
+            margin: 5px 0;
+            padding: 8px;
+            width: 450px;
+        }
+
+        form button {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>📋 Assign Task</h1>
+    <nav>
+        <a href="admin-dashboard.html">Dashboard</a>
+    </nav>
+</header>
+
+<section>
+    <form id="assignTaskForm">
+        <input type="text" id="title" placeholder="Title" required><br>
+        <input type="text" id="description" placeholder="Description"><br>
+        <input type="time" id="time" required><br>
+        <input type="date" id="dueDate" required><br>
+        <select id="priority">
+            <option>High</option>
+            <option>Medium</option>
+            <option>Low</option>
+        </select><br>
+        <select id="username" required></select><br>
+        <button type="submit">Assign Task</button>
+    </form>
+</section>
+
+<div id="toast"></div>
+
+<script>
+    const adminToken = localStorage.getItem("token");
+
+    async function populateUsers() {
+        const res = await fetch("http://localhost:8080/api/admin/users", {
+            headers: { "Authorization": `Bearer ${adminToken}` }
+        });
+        const users = await res.json();
+        const dropdown = document.getElementById("username");
+        dropdown.innerHTML = users.map(u => `<option>${u.username}</option>`).join("");
+    }
+
+    document.getElementById("assignTaskForm").addEventListener("submit", async e => {
+        e.preventDefault();
+
+        const task = {
+            title: document.getElementById("title").value,
+            description: document.getElementById("description").value,
+            dueDate: document.getElementById("dueDate").value,
+            time: document.getElementById("time").value,
+            priority: document.getElementById("priority").value,
+            username: document.getElementById("username").value,
+            status: "ongoing"
+        };
+
+        const res = await fetch("http://localhost:8080/api/admin/assign-task", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${adminToken}`
+            },
+            body: JSON.stringify(task)
+        });
+
+        if (res.ok) {
+            showToast("Task assigned successfully!");
+            document.getElementById("assignTaskForm").reset();
+        } else {
+            alert("Failed to assign task.");
+        }
+    });
+
+    function showToast(msg) {
+        const toast = document.getElementById("toast");
+        toast.textContent = msg;
+        toast.style.display = "block";
+        setTimeout(() => toast.style.display = "none", 3000);
+    }
+
+    window.onload = populateUsers;
+</script>
+
+<footer>
+    <p>&copy; 2025 Task Manager Admin Panel</p>
+</footer>
+</body>
+</html>
